@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "120077552302",
+    "project_id": "pps-mobile-app",
+    "storage_bucket": "pps-mobile-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:120077552302:android:e88436ca4e6cf280fdfb3f",
+        "android_client_info": {
+          "package_name": "com.parenting.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "120077552302-cmt0gl5qtjbba1jq9qhg5niounuvpnh8.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.parenting.android",
+            "certificate_hash": "c3ea0cc5ad16d42f7fde1ac1987a00d2242da60f"
+          }
+        },
+        {
+          "client_id": "120077552302-v65evn2vuf8fac0888oofegn91r55ll0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAgHbFa6icOFS9kG25mXbsb0aOzDYpZxOM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "120077552302-v65evn2vuf8fac0888oofegn91r55ll0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,780 @@
+Widget createTiles(String title, int index) {
+    return Container(
+      decoration: BoxDecoration(
+        color: tileTitle == title ? Colors.grey[300] : Colors.white,
+        border: Border(
+          top: BorderSide(color: Theme.of(context).dividerColor),
+        ),
+      ),
+      child: InkWell(
+        onTap: () {
+          setState(() {
+            if (sessionTitles[selectedSessionIndex] ==
+                WebHelper.ultimateSurvival.name) {
+              isStepsEnabled = false;
+              headerTitle = null;
+            }
+            tileTitle = title;
+            _isLoading = true;
+            expansionTileTitle = sessionTitles[selectedSessionIndex];
+            subExpansionTitle = '';
+          });
+
+          if (sessionTitles[selectedSessionIndex] ==
+              WebHelper.ultimateSurvival.name) {
+            dbHelper
+                .queryBookmarkById(
+                    WebHelper.ultimateSurvival.items[index].objectId, 0)
+                .then((value) {
+              if (value.isNotEmpty) {
+                _isBookmarked = true;
+              } else {
+                _isBookmarked = false;
+              }
+              WebHelper.fetchSpecialityModule(WebHelper
+                      .ultimateSurvival.items[index].objectId
+                      .toString())
+                  .then((onValue) {
+                dbHelper
+                    .insertSpecialityModule(SpecialityModule(
+                            WebHelper.ultimateSurvival.items[index].objectId,
+                            tileTitle,
+                            onValue.title.rendered,
+                            onValue.acf.appContent,
+                            onValue.acf.appImage.url,
+                            null,
+                            onValue.acf.appVideo,
+                            null,
+                            onValue.acf.appNoteTakingGuide,
+                            null,
+                            onValue.acf.appMp3,
+                            onValue.acf.appHelpfulResources,
+                            null,
+                            null)
+                        .toJson())
+                    .then((value) {
+                  setState(() {
+                    imageURL = onValue.acf.appImage.url;
+                    webUrl = onValue.acf.appContent;
+                    headerSubTitle = onValue.title.rendered;
+                    appMp3 = onValue.acf.appMp3;
+                    appVideo = onValue.acf.appVideo;
+                    appNoteTakingGuide = onValue.acf.appNoteTakingGuide;
+                    appHelpfulresources = onValue.acf.appHelpfulResources;
+                    print(onValue.acf.appHelpfulResources);
+
+                    _isLoading = false;
+                    setInitialValues(
+                        WebHelper.ultimateSurvival.items[index].objectId
+                            .toString(),
+                        null);
+                  });
+                });
+              });
+            });
+          } else {
+            dbHelper.querySubSessions(sessions[index].id).then((onValue) {
+              dbHelper.queryBookmarkById(0, sessions[index].id).then((value) {
+                if (value.isNotEmpty) {
+                  _isBookmarked = true;
+                } else {
+                  _isBookmarked = false;
+                }
+
+                dbHelper
+                    .insertSpecialityModule(SpecialityModule(
+                            sessions[index].id,
+                            tileTitle,
+                            onValue[0].subtitle,
+                            null,
+                            onValue[0].imageUrl,
+                            onValue[0].videoName,
+                            onValue[0].videoUrl,
+                            onValue[0].articleTitle,
+                            onValue[0].articleUrl,
+                            onValue[0].audioName,
+                            onValue[0].audioUrl,
+                            null,
+                            null,
+                            null)
+                        .toJson())
+                    .then((value) {
+                  setState(() {
+                    isStepsEnabled = true;
+                    _isLoading = false;
+                    subSessionList = onValue;
+                    headerSubTitle = onValue[0].subtitle;
+                    headerTitle = tileTitle;
+                    setInitialValues(null, sessions[index].id.toString());
+                    if (_pageController.hasClients) _pageController.jumpTo(0.0);
+                  });
+                });
+              });
+            });
+          }
+
+          Navigator.of(context).pop();
+        },
+        child: Container(
+          width: double.infinity,
+          child: Padding(
+            padding: EdgeInsets.only(
+                left: SizeConfig.widthMultiplier * 7,
+                right: SizeConfig.widthMultiplier,
+                top: SizeConfig.heightMultiplier,
+                bottom: SizeConfig.heightMultiplier),
+            child: Text(
+              title,
+              style: TextStyle(
+                  fontWeight: FontWeight.w300,
+                  fontSize: SizeConfig.textMultiplier * 1.8),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget createSubTiles(String title, int index) {
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: tileTitle == title ? Colors.grey[300] : Colors.white,
+        border: Border(
+          top: BorderSide(color: Theme.of(context).dividerColor),
+        ),
+      ),
+      child: InkWell(
+        onTap: () {
+          isStepsEnabled = false;
+          Navigator.of(context).pop();
+          String objectid = WebHelper.battleTested
+              .items[selectedSubSessionIndex].children[index].objectId
+              .toString();
+          setState(() {
+            tileTitle = title;
+            headerTitle = null;
+            _isLoading = true;
+            expansionTileTitle = sessionTitles[selectedSessionIndex];
+            subExpansionTitle = subSessionTitles[selectedSubSessionIndex];
+            setInitialValues(objectid, null);
+          });
+
+          dbHelper.queryBookmarkById(int.parse(objectid), 0).then((value) {
+            if (value.isNotEmpty) {
+              _isBookmarked = true;
+            } else {
+              _isBookmarked = false;
+            }
+
+            WebHelper.fetchSpecialityModule(objectid).then((onValue) {
+              dbHelper
+                  .insertSpecialityModule(SpecialityModule(
+                          int.parse(objectid),
+                          tileTitle,
+                          onValue.title.rendered,
+                          onValue.acf.appContent,
+                          onValue.acf.appImage.url,
+                          null,
+                          onValue.acf.appVideo,
+                          null,
+                          onValue.acf.appNoteTakingGuide,
+                          null,
+                          onValue.acf.appMp3,
+                          onValue.acf.appHelpfulResources,
+                          null,
+                          null)
+                      .toJson())
+                  .then((value) {
+                setState(() {
+                  imageURL = onValue.acf.appImage.url;
+                  webUrl = onValue.acf.appContent;
+                  headerSubTitle = onValue.title.rendered;
+                  appMp3 = onValue.acf.appMp3;
+                  appVideo = onValue.acf.appVideo;
+                  appNoteTakingGuide = onValue.acf.appNoteTakingGuide;
+                  appHelpfulresources = onValue.acf.appHelpfulResources;
+                  _isLoading = false;
+                });
+              });
+            });
+          });
+        },
+        child: Padding(
+          padding: EdgeInsets.only(
+              left: SizeConfig.widthMultiplier * 12,
+              right: SizeConfig.widthMultiplier,
+              top: SizeConfig.heightMultiplier,
+              bottom: SizeConfig.heightMultiplier),
+          child: Text(
+            title,
+            style: TextStyle(
+                fontWeight: FontWeight.w300,
+                fontSize: SizeConfig.textMultiplier * 1.8),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget createExpansionTile(int index, List<Widget> tiles, String title) {
+    if (_isFirst) {
+      expansionChangedMap.add(Map.of({index: false}));
+      sessionTitles.add(title);
+    }
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color:
+            expansionTileTitle == title ? Colors.blueGrey[100] : Colors.white,
+        border: Border(
+          bottom: BorderSide(color: Theme.of(context).dividerColor),
+        ),
+      ),
+      child: ConfigurableExpansionTile(
+        key: GlobalKey(),
+        initiallyExpanded: index == prevIndex,
+        header: Container(
+          width: drawerWidth,
+          child: Container(
+            child: Padding(
+              padding: EdgeInsets.only(
+                  left: SizeConfig.widthMultiplier * 4,
+                  right: SizeConfig.widthMultiplier * 2,
+                  bottom: SizeConfig.heightMultiplier,
+                  top: SizeConfig.heightMultiplier),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                      flex: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Image.asset(
+                          AssetsManager.drawerIconsList[index],
+                          scale: 4,
+                        ),
+                      )),
+                  Expanded(
+                      flex: 2,
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                            fontSize: SizeConfig.textMultiplier * 1.8,
+                            color: Color(0xFF8c8c8c)),
+                      )),
+                  Expanded(flex: 0, child: Icon(Icons.keyboard_arrow_right)),
+                ],
+              ),
+            ),
+          ),
+        ),
+        headerExpanded: Container(
+          width: drawerWidth,
+          child: Container(
+            child: Padding(
+              padding: EdgeInsets.only(
+                  left: SizeConfig.widthMultiplier * 4,
+                  right: SizeConfig.widthMultiplier * 2,
+                  bottom: SizeConfig.heightMultiplier,
+                  top: SizeConfig.heightMultiplier),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: <Widget>[
+                  Expanded(
+                      flex: 0,
+                      child: Padding(
+                        padding: const EdgeInsets.only(right: 8.0),
+                        child: Image.asset(
+                          AssetsManager.drawerIconsList[index],
+                          scale: 4,
+                        ),
+                      )),
+                  Expanded(
+                      flex: 2,
+                      child: Text(
+                        title,
+                        style: TextStyle(
+                            fontSize: SizeConfig.textMultiplier * 1.8,
+                            color: Color(0xFF8c8c8c)),
+                      )),
+                  Expanded(flex: 0, child: Icon(Icons.keyboard_arrow_down)),
+                ],
+              ),
+            ),
+          ),
+        ),
+        children: tiles,
+        onExpansionChanged: (i) {
+          if (i) {
+            setState(() {
+              _isFirst = false;
+              expansionChangedMap[index][index] = i;
+              prevIndex = index;
+              subPrevIndex = -1;
+              selectedSessionIndex = index;
+            });
+          } else {
+            setState(() {
+              _isFirst = false;
+              expansionChangedMap[index][index] = i;
+              prevIndex = -1;
+              subPrevIndex = -1;
+            });
+          }
+        },
+      ),
+    );
+  }
+
+  Widget createSubExpansionTile(int index, List<Widget> tiles, String title) {
+    if (_isFirst) {
+      subExpansionChangedMap.add(Map.of({index: false}));
+      subSessionTitles.add(title);
+    }
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: subExpansionTitle == title ? Colors.grey[350] : Colors.white,
+        border: Border(
+          top: BorderSide(color: Theme.of(context).dividerColor),
+        ),
+      ),
+      child: ConfigurableExpansionTile(
+        key: GlobalKey(),
+        initiallyExpanded: index == subPrevIndex,
+        header: Container(
+          width: drawerWidth,
+          child: Padding(
+            padding: EdgeInsets.only(
+                left: SizeConfig.widthMultiplier * 7,
+                right: SizeConfig.widthMultiplier,
+                top: SizeConfig.heightMultiplier,
+                bottom: SizeConfig.heightMultiplier),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  title,
+                  style: TextStyle(fontSize: SizeConfig.textMultiplier * 1.7),
+                ),
+                Icon(Icons.keyboard_arrow_right)
+              ],
+            ),
+          ),
+        ),
+        headerExpanded: Container(
+          width: drawerWidth,
+          child: Padding(
+            padding: EdgeInsets.only(
+                left: SizeConfig.widthMultiplier * 7,
+                right: SizeConfig.widthMultiplier,
+                top: SizeConfig.heightMultiplier,
+                bottom: SizeConfig.heightMultiplier),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Text(
+                  title,
+                  style: TextStyle(fontSize: SizeConfig.textMultiplier * 1.7),
+                ),
+                Icon(Icons.keyboard_arrow_down)
+              ],
+            ),
+          ),
+        ),
+        children: tiles,
+        onExpansionChanged: (i) {
+          if (i) {
+            setState(() {
+              _isFirst = false;
+              subExpansionChangedMap[index][index] = i;
+              subPrevIndex = index;
+              selectedSubSessionIndex = index;
+            });
+          } else {
+            setState(() {
+              _isFirst = false;
+              subExpansionChangedMap[index][index] = i;
+              subPrevIndex = -1;
+            });
+          }
+        },
+      ),
+    );
+  }
+
+  Widget createSimpleTitle(int index, String title) {
+    if (_isFirst) {
+      expansionChangedMap.add(Map.of({index: false}));
+      sessionTitles.add(title);
+    }
+
+    return InkWell(
+      onTap: () {},
+      child: Container(
+        width: double.infinity,
+        decoration: BoxDecoration(
+          color:
+              expansionTileTitle == title ? Colors.blueGrey[100] : Colors.white,
+          border: Border(
+            bottom: BorderSide(color: Theme.of(context).dividerColor),
+          ),
+        ),
+        child: ConfigurableExpansionTile(
+          key: GlobalKey(),
+          initiallyExpanded: index == prevIndex,
+          header: Container(
+            width: drawerWidth,
+            child: Container(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: SizeConfig.widthMultiplier * 4,
+                    right: SizeConfig.widthMultiplier * 2,
+                    bottom: SizeConfig.heightMultiplier,
+                    top: SizeConfig.heightMultiplier),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                        flex: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Image.asset(
+                            AssetsManager.drawerIconsList[index],
+                            scale: 4,
+                          ),
+                        )),
+                    Expanded(
+                        flex: 2,
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                              fontSize: SizeConfig.textMultiplier * 1.8,
+                              color: Color(0xFF8c8c8c)),
+                        )),
+                    Expanded(flex: 0, child: Container()),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          headerExpanded: Container(
+            width: drawerWidth,
+            child: Container(
+              child: Padding(
+                padding: EdgeInsets.only(
+                    left: SizeConfig.widthMultiplier * 4,
+                    right: SizeConfig.widthMultiplier * 2,
+                    bottom: SizeConfig.heightMultiplier,
+                    top: SizeConfig.heightMultiplier),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: <Widget>[
+                    Expanded(
+                        flex: 0,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 8.0),
+                          child: Image.asset(
+                            AssetsManager.drawerIconsList[index],
+                            scale: 4,
+                          ),
+                        )),
+                    Expanded(
+                        flex: 2,
+                        child: Text(
+                          title,
+                          style: TextStyle(
+                              fontSize: SizeConfig.textMultiplier * 1.8,
+                              color: Color(0xFF8c8c8c)),
+                        )),
+                    Expanded(flex: 0, child: Container()),
+                  ],
+                ),
+              ),
+            ),
+          ),
+          onExpansionChanged: (i) {
+            print(title + "  " + index.toString());
+            if (i) {
+              if (title == 'Logout') {
+                Navigator.of(context).pushReplacement(
+                    MaterialPageRoute(builder: (context) => Login()));
+                Utils.isLoginFromSharedPreference = false;
+                sharedPreferences.remove('username');
+                sharedPreferences.remove('password');
+              } else if (title == 'Bookmarks') {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => BookmarkScreen()));
+              } else if (title == 'Documents') {
+                Navigator.of(context).pop();
+                Navigator.of(context).push(
+                    MaterialPageRoute(builder: (context) => DocumentsScreen()));
+              } else {
+                Navigator.of(context).pop();
+                setInitialValues(null, null);
+                setState(() {
+                  _isFirst = false;
+                  expansionChangedMap[index][index] = i;
+                  prevIndex = index;
+                  subPrevIndex = -1;
+                  selectedSessionIndex = index;
+                  expansionTileTitle = title;
+                  tileTitle = "";
+                  subExpansionTitle = "";
+                  headerTitle = "";
+                  headerSubTitle = "";
+                });
+              }
+            } else {
+              setState(() {
+                _isFirst = false;
+                expansionChangedMap[index][index] = i;
+                prevIndex = -1;
+                subPrevIndex = -1;
+              });
+            }
+          },
+        ),
+      ),
+    );
+  }
+  
+  
+  /*SafeArea(
+              child: Container(
+                width: drawerWidth,
+                child: Drawer(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: <Widget>[
+                      DrawerHeader(
+                        padding: EdgeInsets.zero,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            Expanded(
+                              flex: 1,
+                              child: Container(
+                                width: double.infinity,
+                                decoration:
+                                    BoxDecoration(color: Color(0xFF442d53)),
+                                child: Align(
+                                  alignment: Alignment.centerLeft,
+                                  child: Padding(
+                                    padding: const EdgeInsets.only(left: 16.0),
+                                    child: Text(
+                                      appThemeData.appName,
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize:
+                                            SizeConfig.textMultiplier * 1.6,
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              flex: 2,
+                              child:
+                                  Image.asset('assets/images/banner_img.png'),
+                            )
+                          ],
+                        ),
+                      ),
+                      Expanded(
+                          child: FutureBuilder(
+                              future: dbHelper.querySessions(1),
+                              builder: (context, snapshot) {
+                                if (snapshot.hasData) {
+                                  i = -1;
+                                  int j = -1;
+                                  int k = -1;
+                                  int tileIndex = -1;
+                                  sessions = snapshot.data;
+                                  List<Widget> tiles = [];
+                                  List<Widget> expansionList = [];
+                                  List<Widget> subTiles = [];
+                                  List<Widget> subExpansionList = [];
+
+                                  sessions.forEach((items) {
+                                    tiles.add(createTiles(
+                                        items.title, tileIndex += 1));
+                                  });
+                                  expansionList.add(Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                                color: Theme.of(context)
+                                                    .dividerColor),
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: SizeConfig.widthMultiplier *
+                                                  4,
+                                              right:
+                                                  SizeConfig.widthMultiplier *
+                                                      2,
+                                              bottom:
+                                                  SizeConfig.heightMultiplier,
+                                              top: SizeConfig.heightMultiplier),
+                                          child: Text(
+                                            "Topics",
+                                            style: TextStyle(
+                                                fontSize:
+                                                    SizeConfig.textMultiplier *
+                                                        2,
+                                                color: Color(0xFF8c8c8c),
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                      createExpansionTile(
+                                          i += 1, tiles, "Steps 1-7")
+                                    ],
+                                  ));
+
+                                  tiles = [];
+                                  tileIndex = -1;
+                                  WebHelper.ultimateSurvival.items
+                                      .forEach((items) {
+                                    tiles.add(createTiles(
+                                        items.title, tileIndex += 1));
+                                  });
+                                  expansionList.add(createExpansionTile(i += 1,
+                                      tiles, WebHelper.ultimateSurvival.name));
+
+                                  WebHelper.battleTested.items.forEach((items) {
+                                    subTiles = [];
+                                    k = -1;
+                                    items.children.forEach((child) {
+                                      subTiles.add(
+                                          createSubTiles(child.title, k += 1));
+                                    });
+
+                                    subExpansionList.add(createSubExpansionTile(
+                                        j += 1, subTiles, items.title));
+                                  });
+
+                                  expansionList.add(createExpansionTile(
+                                      i += 1,
+                                      subExpansionList,
+                                      WebHelper.battleTested.name));
+
+                                  expansionList.add(Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                                color: Theme.of(context)
+                                                    .dividerColor),
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: SizeConfig.widthMultiplier *
+                                                  4,
+                                              right:
+                                                  SizeConfig.widthMultiplier *
+                                                      2,
+                                              bottom:
+                                                  SizeConfig.heightMultiplier,
+                                              top: SizeConfig.heightMultiplier *
+                                                  2),
+                                          child: Text(
+                                            "Explore",
+                                            style: TextStyle(
+                                                fontSize:
+                                                    SizeConfig.textMultiplier *
+                                                        2,
+                                                color: Color(0xFF8c8c8c),
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                      createSimpleTitle(
+                                          i += 1, "Free Intro Webinar")
+                                    ],
+                                  ));
+
+                                  expansionList
+                                      .add(createSimpleTitle(i += 1, "Notes"));
+                                  expansionList.add(
+                                      createSimpleTitle(i += 1, "Bookmarks"));
+
+                                  expansionList.add(
+                                      createSimpleTitle(i += 1, "Documents"));
+
+                                  expansionList.add(Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: <Widget>[
+                                      Container(
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                                color: Theme.of(context)
+                                                    .dividerColor),
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: EdgeInsets.only(
+                                              left: SizeConfig.widthMultiplier *
+                                                  4,
+                                              right:
+                                                  SizeConfig.widthMultiplier *
+                                                      2,
+                                              bottom:
+                                                  SizeConfig.heightMultiplier,
+                                              top: SizeConfig.heightMultiplier *
+                                                  2),
+                                          child: Text(
+                                            "Others",
+                                            style: TextStyle(
+                                                fontSize:
+                                                    SizeConfig.textMultiplier *
+                                                        2,
+                                                color: Color(0xFF8c8c8c),
+                                                fontWeight: FontWeight.bold),
+                                          ),
+                                        ),
+                                      ),
+                                      createSimpleTitle(i += 1, "Contact Us")
+                                    ],
+                                  ));
+                                  expansionList.add(createSimpleTitle(
+                                      i += 1, "Instructions"));
+
+                                  expansionList
+                                      .add(createSimpleTitle(i += 1, "Logout"));
+
+                                  return ListView.builder(
+                                      itemCount: expansionList.length,
+                                      itemBuilder: (context, index) {
+                                        return expansionList[index];
+                                      });
+                                } else {
+                                  return Container();
+                                }
+                              })),
+                    ],
+                  ),
+                ),
+              ),
+            )*/
+            /*AppDrawer(this)*/
