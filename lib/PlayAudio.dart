@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
-import 'dart:io';
+
 import 'package:audioplayers/audioplayers.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -60,7 +60,8 @@ class _PlayAudioState extends State<PlayAudio> {
 
     if (uri!.contains('sessions/'))
       audioId = '"${uri!.split("sessions/")[1].split(".mp3")[0]}"';
-    else if (uri!.contains('content/mp3/')) audioId = '"${uri!.split("content/mp3/")[1].split(".mp3")[0]}"';
+    else if (uri!.contains('content/mp3/'))
+      audioId = '"${uri!.split("content/mp3/")[1].split(".mp3")[0]}"';
 
     print('AID :: $audioId');
     if (Utils.isInternetAvailable) {
@@ -70,20 +71,25 @@ class _PlayAudioState extends State<PlayAudio> {
         startTime = value;
         print('currentTimeInMillis :: $currentTimeInMillis');
         final fileName = uri!.substring(uri!.lastIndexOf('/') + 1, uri!.length);
-        Utils.isFileExist(Utils.getDirectoryPath(), fileName).then((value) async {
+        Utils.isFileExist(Utils.getDirectoryPath(), fileName)
+            .then((value) async {
           if (value != null) {
             print('VALUES :: NOT NULL');
             try {
               if (audioPlayer.state == PlayerState.STOPPED)
                 await audioPlayer.play(value,
-                    isLocal: true, position: Duration(milliseconds: currentTimeInMillis!), stayAwake: true);
+                    isLocal: true,
+                    position: Duration(milliseconds: currentTimeInMillis!),
+                    stayAwake: true);
             } catch (e) {
               print('PlayAudio :: $e');
             }
           } else {
             print('VALUES :: ${audioPlayer.state}');
             if (audioPlayer.state == PlayerState.STOPPED)
-              await audioPlayer.play(uri!, stayAwake: true, position: Duration(milliseconds: currentTimeInMillis!));
+              await audioPlayer.play(uri!,
+                  stayAwake: true,
+                  position: Duration(milliseconds: currentTimeInMillis!));
           }
         });
         //audioPlayer.seek(Duration(milliseconds: currentTimeInMillis));
@@ -93,11 +99,14 @@ class _PlayAudioState extends State<PlayAudio> {
         currentTimeInMillis = value;
         startTime = value;
         final fileName = uri!.substring(uri!.lastIndexOf('/') + 1, uri!.length);
-        Utils.isFileExist(Utils.getDirectoryPath(), fileName).then((value) async {
+        Utils.isFileExist(Utils.getDirectoryPath(), fileName)
+            .then((value) async {
           if (value != null) {
             if (audioPlayer.state == PlayerState.STOPPED) {
               await audioPlayer.play(value,
-                  isLocal: true, position: Duration(milliseconds: currentTimeInMillis!), stayAwake: true);
+                  isLocal: true,
+                  position: Duration(milliseconds: currentTimeInMillis!),
+                  stayAwake: true);
             }
           }
         });
@@ -112,7 +121,8 @@ class _PlayAudioState extends State<PlayAudio> {
       ScaffoldMessenger.of(_scaffoldKey.currentContext!).hideCurrentSnackBar();
     }
     timer?.cancel();
-    print('PLAY AUDIO dispose :: ${((currentTimeInMillis! * 100) / totalTimeNumber)}');
+    print(
+        'PLAY AUDIO dispose :: ${((currentTimeInMillis! * 100) / totalTimeNumber)}');
     if (Utils.isInternetAvailable) {
       if (((currentTimeInMillis! * 100) / totalTimeNumber) >= 99) {
         WebHelper.setAudioState(audioId, 0);
@@ -136,8 +146,10 @@ class _PlayAudioState extends State<PlayAudio> {
     double seconds = ((millis % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
 
     if (hours.toInt().toString().padLeft(2, '0') == '00') {
-      timeString = '${minutes.toInt().toString().padLeft(2, '0')}:${seconds.toInt().toString().padLeft(2, '0')}';
-    } else if (hours.toInt().toString().padLeft(2, '0') == '00' && minutes.toInt().toString().padLeft(2, '0') == '00') {
+      timeString =
+          '${minutes.toInt().toString().padLeft(2, '0')}:${seconds.toInt().toString().padLeft(2, '0')}';
+    } else if (hours.toInt().toString().padLeft(2, '0') == '00' &&
+        minutes.toInt().toString().padLeft(2, '0') == '00') {
       timeString = '${seconds.toInt().toString().padLeft(2, '0')}';
     } else {
       timeString =
@@ -239,16 +251,20 @@ class _PlayAudioState extends State<PlayAudio> {
             ? Container(
                 child: Builder(
                   builder: (context) {
-                    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-                      final fileName = uri!.substring(uri!.lastIndexOf('/') + 1, uri!.length);
-                      Utils.isFileExist(Utils.getDirectoryPath(), fileName).then((value) {
+                    WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
+                      final fileName = uri!
+                          .substring(uri!.lastIndexOf('/') + 1, uri!.length);
+                      Utils.isFileExist(Utils.getDirectoryPath(), fileName)
+                          .then((value) {
                         if (value != null) {
                           loadAudio();
                         } else {
                           timer = Timer.periodic(Duration(seconds: 2), (timer) {
                             if (Utils.isInternetAvailable) {
                               if (_scaffoldKey.currentContext != null)
-                                ScaffoldMessenger.of(_scaffoldKey.currentContext!).hideCurrentSnackBar();
+                                ScaffoldMessenger.of(
+                                        _scaffoldKey.currentContext!)
+                                    .hideCurrentSnackBar();
                               timer.cancel();
                               if (isFromNoInternetState) loadAudio();
                             } else {
@@ -272,7 +288,10 @@ class _PlayAudioState extends State<PlayAudio> {
               )
             : Stack(
                 children: <Widget>[
-                  Center(child: CachedNetworkImage(imageUrl: imageURL!,)),
+                  Center(
+                      child: CachedNetworkImage(
+                    imageUrl: imageURL!,
+                  )),
                   Container(
                     width: double.infinity,
                     height: double.infinity,
@@ -287,7 +306,8 @@ class _PlayAudioState extends State<PlayAudio> {
                                   setState(() {
                                     _isSeekComplete = false;
                                     currentSeekValue = currentSeekValue - 10;
-                                    audioPlayer.seek(Duration(seconds: currentSeekValue.toInt()));
+                                    audioPlayer.seek(Duration(
+                                        seconds: currentSeekValue.toInt()));
                                   });
                                 } else {
                                   setState(() {
@@ -331,7 +351,8 @@ class _PlayAudioState extends State<PlayAudio> {
                                 setState(() {
                                   _isSeekComplete = false;
                                   currentSeekValue = currentSeekValue + 10;
-                                  audioPlayer.seek(Duration(seconds: currentSeekValue.toInt()));
+                                  audioPlayer.seek(Duration(
+                                      seconds: currentSeekValue.toInt()));
                                 });
                               },
                               child: Icon(
@@ -343,7 +364,8 @@ class _PlayAudioState extends State<PlayAudio> {
                           mainAxisAlignment: MainAxisAlignment.center,
                         ),
                         Padding(
-                          padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0),
+                          padding: const EdgeInsets.only(
+                              left: 8.0, right: 8.0, bottom: 16.0),
                           child: Row(
                             children: <Widget>[
                               Expanded(
@@ -360,13 +382,18 @@ class _PlayAudioState extends State<PlayAudio> {
                                     inactiveTrackColor: Colors.grey,
                                     trackHeight: 1.5,
                                     thumbColor: Color(0xFF442d53),
-                                    thumbShape: RoundSliderThumbShape(enabledThumbRadius: 3.0),
+                                    thumbShape: RoundSliderThumbShape(
+                                        enabledThumbRadius: 3.0),
                                     overlayColor: Colors.purple.withAlpha(32),
-                                    overlayShape: RoundSliderOverlayShape(overlayRadius: 12.0),
+                                    overlayShape: RoundSliderOverlayShape(
+                                        overlayRadius: 12.0),
                                   ),
                                   child: totalSeekValue > 0.0
                                       ? Slider(
-                                          value: currentSeekValue <= totalSeekValue ? currentSeekValue : totalSeekValue,
+                                          value:
+                                              currentSeekValue <= totalSeekValue
+                                                  ? currentSeekValue
+                                                  : totalSeekValue,
                                           max: totalSeekValue,
                                           min: 0.0,
                                           onChanged: (value) {
@@ -374,7 +401,8 @@ class _PlayAudioState extends State<PlayAudio> {
                                             setState(() {
                                               _isSeekComplete = false;
                                               currentSeekValue = value;
-                                              audioPlayer.seek(Duration(seconds: value.toInt()));
+                                              audioPlayer.seek(Duration(
+                                                  seconds: value.toInt()));
                                             });
                                           })
                                       : Slider(
@@ -386,7 +414,8 @@ class _PlayAudioState extends State<PlayAudio> {
                                             setState(() {
                                               _isSeekComplete = false;
                                               currentSeekValue = value;
-                                              audioPlayer.seek(Duration(seconds: value.toInt()));
+                                              audioPlayer.seek(Duration(
+                                                  seconds: value.toInt()));
                                             });
                                           }),
                                 ),

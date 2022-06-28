@@ -488,7 +488,7 @@ class DatabaseHelper {
     // allRows.forEach((element) {
     //   print(element.toString());
     // });
-     allRows = await db!.rawQuery("SELECT * FROM Notes");
+     allRows = await db.rawQuery("SELECT * FROM Notes");
     print("SpecialityModule TABLE:");
     allRows.forEach((element) {
       print(element.toString());

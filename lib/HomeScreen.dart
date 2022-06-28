@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -19,7 +18,7 @@ import 'package:ppsflutter/DatabaseHelper.dart';
 import 'package:ppsflutter/DrawerCallBacks.dart';
 import 'package:ppsflutter/Interactive.dart';
 import 'package:ppsflutter/PDFTextContent.dart';
-import 'package:ppsflutter/PlayAudio.dart';
+import 'package:ppsflutter/PlayContinuesAudio.dart';
 import 'package:ppsflutter/PlayVideo.dart';
 import 'package:ppsflutter/SizeConfig.dart';
 import 'package:ppsflutter/WebHelper.dart';
@@ -40,6 +39,7 @@ import 'package:video_player/video_player.dart' as video_player;
 import 'AppDrawer.dart';
 import 'FileOperationCallBacks.dart';
 import 'PDFFileViewer.dart';
+import 'PlayAudio.dart';
 import 'Utils.dart';
 import 'databaseModel/Bookmark.dart';
 import 'databaseModel/Course.dart';
@@ -221,7 +221,7 @@ class _HomeScreenState extends State<HomeScreen>
               headerTitle = expansionTileTitle;
             });
 
-            WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
               int id = int.parse(sharedPreferences.getString('subSessionId')!);
 
               for (int i = 0; i < onValue.length; i++) {
@@ -294,7 +294,7 @@ class _HomeScreenState extends State<HomeScreen>
             DefaultCacheManager().emptyCache();
           }
         } else {
-          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
             showOfflineContentDialog();
           });
         }
@@ -474,7 +474,7 @@ class _HomeScreenState extends State<HomeScreen>
     _pageController = PreloadPageController(initialPage: 0, keepPage: true);
     _listViewScrollController = ScrollController();
 
-    WidgetsBinding.instance!.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) {
       if ((bookmarkButtonRect == null ||
               floatButtonRect == null ||
               drawerIconRect == null) &&
@@ -1791,28 +1791,42 @@ class _HomeScreenState extends State<HomeScreen>
     final fileName = link.substring(link.lastIndexOf('/') + 1, link.length);
     Utils.isFileExist(Utils.getDirectoryPath(), fileName).then((value) {
       if (value != null) {
-        Navigator.of(_scaffoldKey.currentContext!)
-            .push(
-                MaterialPageRoute(builder: (context) => PlayAudio(title, link)))
-            .then((value) {
-          print('RESULT DATA :: $value');
-          if (expansionTileTitle != WebHelper.ultimateSurvival!.name &&
-              expansionTileTitle != WebHelper.battleTested!.name) {
-            if (sharedPreferences.getBool('_isAudioPlayContinuously') != null &&
-                sharedPreferences.getBool('_isAudioPlayContinuously')!) {
-              if (value != null &&
-                  value &&
-                  subSessionList!.length - 1 > pageValue.value) {
-                _pageController!.jumpToPage(pageValue.value + 1);
-                String? url = subSessionList![pageValue.value].audioUrl;
-                WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-                  playAudio(_scaffoldKey.currentContext!, subSessionList![pageValue.value].audioName,
-                      url, isContinueStreaming, playOnline);
-                });
-              }
-            }
+        if (expansionTileTitle != WebHelper.ultimateSurvival!.name &&
+            expansionTileTitle != WebHelper.battleTested!.name) {
+          if (sharedPreferences.getBool('_isAudioPlayContinuously') != null &&
+              sharedPreferences.getBool('_isAudioPlayContinuously')!) {
+            Navigator.push(
+                _scaffoldKey.currentContext!,
+                MaterialPageRoute(
+                    builder: (context) => PlayContinuesAudio(
+                        subSessionList,
+                        pageValue.value,
+                        isContinueStreaming,
+                        playOnline))).then((value) {
+              _pageController!.jumpToPage(value);
+              //   print('RESULT DATA :: $value');
+              //   if (expansionTileTitle != WebHelper.ultimateSurvival!.name &&
+              //       expansionTileTitle != WebHelper.battleTested!.name) {
+              //     if (sharedPreferences.getBool('_isAudioPlayContinuously') != null &&
+              //         sharedPreferences.getBool('_isAudioPlayContinuously')!) {
+              //       if (value != null &&
+              //           value &&
+              //           subSessionList!.length - 1 > pageValue.value) {
+              //         _pageController!.jumpToPage(pageValue.value + 1);
+              //         String? url = subSessionList![pageValue.value].audioUrl;
+              //         // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+              //           playAudio(_scaffoldKey.currentContext!, subSessionList![pageValue.value].audioName,
+              //               url, isContinueStreaming, playOnline);
+              //         // });
+              //       }
+              //     }
+              //   }
+            });
           }
-        });
+        } else {
+          Navigator.push(_scaffoldKey.currentContext!,
+              MaterialPageRoute(builder: (context) => PlayAudio(title, link)));
+        }
       } else {
         if (!isContinueStreaming &&
             sharedPreferences.getBool('_isPopupOptionEnabled')!) {
@@ -1821,28 +1835,43 @@ class _HomeScreenState extends State<HomeScreen>
           if (playOnline ||
               (sharedPreferences.getBool('onlineOption') != null &&
                   sharedPreferences.getBool('onlineOption')!)) {
-            Navigator.of(_scaffoldKey.currentContext!)
-                .push(MaterialPageRoute(
-                    builder: (context) => PlayAudio(title, link)))
-                .then((value) {
-              print('RESULT DATA :: $value');
+            if (expansionTileTitle != WebHelper.ultimateSurvival!.name &&
+                expansionTileTitle != WebHelper.battleTested!.name) {
               if (sharedPreferences.getBool('_isAudioPlayContinuously') !=
                       null &&
                   sharedPreferences.getBool('_isAudioPlayContinuously')!) {
-                if (value != null && value) {
-                  _pageController!.jumpToPage(pageValue.value + 1);
-                  String? url = subSessionList![pageValue.value].audioUrl;
-                  WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-                    playAudio(
-                        _scaffoldKey.currentContext!,
-                        subSessionList![pageValue.value].audioName,
-                        url,
-                        isContinueStreaming,
-                        playOnline);
-                  });
-                }
+                Navigator.push(_scaffoldKey.currentContext!,
+                    MaterialPageRoute(builder: (context) {
+                  return PlayContinuesAudio(subSessionList, pageValue.value,
+                      isContinueStreaming, playOnline);
+                })).then((value) {
+                  _pageController!.jumpToPage(value);
+
+                  // print('RESULT DATA :: $value');
+                  // if (sharedPreferences.getBool('_isAudioPlayContinuously') !=
+                  //         null &&
+                  //     sharedPreferences.getBool('_isAudioPlayContinuously')!) {
+                  //   if (value != null && value) {
+                  //     _pageController!.jumpToPage(pageValue.value + 1);
+                  //     String? url = subSessionList![pageValue.value].audioUrl;
+                  //     // WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
+                  //       playAudio(
+                  //           _scaffoldKey.currentContext!,
+                  //           subSessionList![pageValue.value].audioName,
+                  //           url,
+                  //           isContinueStreaming,
+                  //           playOnline);
+                  //     // });
+                  //   }
+                  // }
+                });
               }
-            });
+            } else {
+              Navigator.push(
+                  _scaffoldKey.currentContext!,
+                  MaterialPageRoute(
+                      builder: (context) => PlayAudio(title, link)));
+            }
           } else {
             Utils.downloadSingleFile(_scaffoldKey.currentContext, title,
                 subSessionList![pageValue.value].audioUrl);
@@ -1877,9 +1906,9 @@ class _HomeScreenState extends State<HomeScreen>
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => PDFFileViewer(label, link)));
           } else if (linkType == 'audio') {
-            playAudio(context, label, link, true, true);
-            // Navigator.of(context).push(MaterialPageRoute(
-            //     builder: (context) => PlayAudio(label, link)));
+            // playAudio(context, label, link, true, true);
+            Navigator.of(context).push(MaterialPageRoute(
+                builder: (context) => PlayAudio(label, link)));
           } else if (linkType == 'video') {
             Navigator.of(context).push(MaterialPageRoute(
                 builder: (context) => PlayVideo(label, link)));

@@ -1,4 +1,4 @@
-import 'package:configurable_expansion_tile/configurable_expansion_tile.dart';
+import 'package:configurable_expansion_tile_null_safety/configurable_expansion_tile_null_safety.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -142,7 +142,7 @@ class _AppDrawerState extends State<AppDrawer> {
                                   child: Image.asset(
                                       'assets/images/banner_img.png')),
                               Column(
-                                mainAxisSize: MainAxisSize.max,
+                                mainAxisSize: MainAxisSize.min,
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
@@ -161,20 +161,20 @@ class _AppDrawerState extends State<AppDrawer> {
                                                       2),
                                         )),
                                   ),
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 4.0, left: 16.0, bottom: 8.0),
-                                    child: HtmlWidget(
-                                      "<p style=font-size: 2vw;>"
-                                      "<a href='https://www.positiveparentingsolutions.com/amember/profile.php?amember_login=${WebHelper.login!.login}'>Edit Profile</a>"
-                                      "</p>",
-                                      hyperlinkColor: Colors.grey,
-                                      textStyle: TextStyle(
-                                          fontSize:
-                                              SizeConfig.textMultiplier * 1.7,
-                                          color: Colors.grey),
-                                    ),
-                                  ),
+                                  // Padding(
+                                  //   padding: const EdgeInsets.only(
+                                  //       top: 4.0, left: 16.0, bottom: 8.0),
+                                  //   child: HtmlWidget(
+                                  //     "<p style=font-size: 2vw;>"
+                                  //     "<a href='https://www.positiveparentingsolutions.com/amember/profile.php?amember_login=${WebHelper.login!.login}'>Edit Profile</a>"
+                                  //     "</p>",
+                                  //     hyperlinkColor: Colors.grey,
+                                  //     textStyle: TextStyle(
+                                  //         fontSize:
+                                  //             SizeConfig.textMultiplier * 1.7,
+                                  //         color: Colors.grey),
+                                  //   ),
+                                  // ),
                                 ],
                               )
                             ],

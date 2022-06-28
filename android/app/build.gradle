@@ -53,7 +53,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 31
         versionCode 65
-        versionName '4.1.7'
+        versionName localProperties.getProperty('flutter.versionName')
         multiDexEnabled true
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

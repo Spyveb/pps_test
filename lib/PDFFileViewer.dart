@@ -14,7 +14,6 @@ import 'package:webview_flutter/webview_flutter.dart' as webView;
 
 import 'SizeConfig.dart';
 import 'Utils.dart';
-import 'WebHelper.dart';
 import 'appThemeData.dart';
 
 class PDFFileViewer extends StatefulWidget {
@@ -42,7 +41,10 @@ class _PDFFileViewerState extends State<PDFFileViewer> {
     super.initState();
     getApplicationDocumentsDirectory().then((dir) {
       print('PDF URI :: ${widget.uri}');
-      Dio().downloadUri(Uri.parse(widget.uri!), '${dir.path}/printDoc.pdf', options: Options(headers: {'User-Agent': 'Mozilla/5.0'})).then((value) {
+      Dio()
+          .downloadUri(Uri.parse(widget.uri!), '${dir.path}/printDoc.pdf',
+              options: Options(headers: {'User-Agent': 'Mozilla/5.0'}))
+          .then((value) {
         File file = File('${dir.path}/printDoc.pdf');
         pdfData = file.readAsBytesSync();
         _isFileDownloaded = true;
@@ -50,7 +52,8 @@ class _PDFFileViewerState extends State<PDFFileViewer> {
         if (needToOpenPrint) {
           needToOpenPrint = false;
           if (dialogContext != null) Navigator.pop(dialogContext!);
-          Printing.layoutPdf(onLayout: ((PdfPageFormat format) async => pdfData));
+          Printing.layoutPdf(
+              onLayout: ((PdfPageFormat format) async => pdfData));
         }
       });
     });
@@ -64,14 +67,17 @@ class _PDFFileViewerState extends State<PDFFileViewer> {
         title: Text(
           widget.fileName!,
           style: TextStyle(
-              fontSize: SizeConfig.isMobilePortrait ? SizeConfig.textMultiplier * 1.6 : SizeConfig.textMultiplier * 1.5),
+              fontSize: SizeConfig.isMobilePortrait
+                  ? SizeConfig.textMultiplier * 1.6
+                  : SizeConfig.textMultiplier * 1.5),
         ),
         actions: [
           IconButton(
               icon: Icon(Icons.print),
               onPressed: () {
                 if (_isFileDownloaded) {
-                  Printing.layoutPdf(onLayout: ((PdfPageFormat format) async => pdfData));
+                  Printing.layoutPdf(
+                      onLayout: ((PdfPageFormat format) async => pdfData));
                 } else {
                   needToOpenPrint = true;
                   _onLoading();
@@ -95,12 +101,14 @@ class _PDFFileViewerState extends State<PDFFileViewer> {
         titleSpacing: 0.0,
         backgroundColor: Utils.getColorFromHex(appThemeData.appBarColor),
       ),
-      drawer: widget.fileName == 'Backtalk Battles Guide' ? AppDrawer(null) : null,
+      drawer:
+          widget.fileName == 'Backtalk Battles Guide' ? AppDrawer(null) : null,
       body: Utils.isInternetAvailable
           ? Stack(
               children: <Widget>[
                 webView.WebView(
-                  initialUrl: 'https://docs.google.com/viewer?embedded=true&url=${widget.uri}',
+                  initialUrl:
+                      'https://docs.google.com/viewer?embedded=true&url=${widget.uri}',
                   debuggingEnabled: true,
                   javascriptMode: webView.JavascriptMode.unrestricted,
                   onWebViewCreated: (webView.WebViewController _controller) {
@@ -115,12 +123,15 @@ class _PDFFileViewerState extends State<PDFFileViewer> {
                   },
                   onPageFinished: (string) {
                     print("Page Loading Finish: " + string);
-                    if (string == "about:blank" || startUrl != string || (_isForMainFrame && Platform.isIOS)) {
+                    if (string == "about:blank" ||
+                        startUrl != string ||
+                        (_isForMainFrame && Platform.isIOS)) {
                       setState(() {
                         _isLoading = true;
                         _completer.future.then((value) {
                           webView.WebViewController webController = value;
-                          webController.loadUrl('https://docs.google.com/viewer?embedded=true&url=${widget.uri}');
+                          webController.loadUrl(
+                              'https://docs.google.com/viewer?embedded=true&url=${widget.uri}');
                         });
                       });
                     } else {
@@ -162,7 +173,7 @@ class _PDFFileViewerState extends State<PDFFileViewer> {
           : Container(
               child: Builder(
                 builder: (context) {
-                  WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+                  WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
                     Utils.showNoInternetSnackBar(_scaffoldKey);
                     Timer.periodic(Duration(seconds: 2), (timer) {
                       if (Utils.isInternetAvailable) {

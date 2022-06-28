@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:ppsflutter/DatabaseHelper.dart';
 import 'package:ppsflutter/SizeConfig.dart';
@@ -630,40 +629,40 @@ class _LoginState extends State<Login> {
                     decoration: TextDecoration.underline,
                   ),
                 )),
-            Platform.isAndroid
-                ? HtmlWidget(
-                    "<center>"
-                            "<p style=font-size: 2vw;>"
-                            "You must be enrolled in "
-                            "<b><i>" +
-                        appThemeData.appName +
-                        "</i></b> "
-                            "to login. "
-                            "<br><br>"
-                            "For more information <a href='mailto:help@PositiveParentingSolutions.com'><b> email us </b></a> "
-                            "or attend one of our <a href='https://www.positiveparentingsolutions.com/web-free-webinars'><b>free webinars</b></a>"
-                            "</p>"
-                            "</center>",
-                    hyperlinkColor: Color(0xFF442d53),
-                    textStyle: TextStyle(
-                        fontSize: SizeConfig.textMultiplier * 1.65,
-                        color: Colors.grey),
-                  )
-                : HtmlWidget(
-                    "<center>"
-                            "<p style=font-size: 2vw;>"
-                            "You must be enrolled in "
-                            "<b><i>" +
-                        appThemeData.appName +
-                        "</i></b> "
-                            "to login. "
-                            "</p>"
-                            "</center>",
-                    hyperlinkColor: Color(0xFF442d53),
-                    textStyle: TextStyle(
-                        fontSize: SizeConfig.textMultiplier * 1.65,
-                        color: Colors.grey),
-                  )
+            // Platform.isAndroid
+            //     ? HtmlWidget(
+            //         "<center>"
+            //                 "<p style=font-size: 2vw;>"
+            //                 "You must be enrolled in "
+            //                 "<b><i>" +
+            //             appThemeData.appName +
+            //             "</i></b> "
+            //                 "to login. "
+            //                 "<br><br>"
+            //                 "For more information <a href='mailto:help@PositiveParentingSolutions.com'><b> email us </b></a> "
+            //                 "or attend one of our <a href='https://www.positiveparentingsolutions.com/web-free-webinars'><b>free webinars</b></a>"
+            //                 "</p>"
+            //                 "</center>",
+            //         hyperlinkColor: Color(0xFF442d53),
+            //         textStyle: TextStyle(
+            //             fontSize: SizeConfig.textMultiplier * 1.65,
+            //             color: Colors.grey),
+            //       )
+            //     : HtmlWidget(
+            //         "<center>"
+            //                 "<p style=font-size: 2vw;>"
+            //                 "You must be enrolled in "
+            //                 "<b><i>" +
+            //             appThemeData.appName +
+            //             "</i></b> "
+            //                 "to login. "
+            //                 "</p>"
+            //                 "</center>",
+            //         hyperlinkColor: Color(0xFF442d53),
+            //         textStyle: TextStyle(
+            //             fontSize: SizeConfig.textMultiplier * 1.65,
+            //             color: Colors.grey),
+            //       )
           ],
         ),
       ),

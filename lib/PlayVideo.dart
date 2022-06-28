@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:ppsflutter/WebHelper.dart';
@@ -45,7 +46,6 @@ class _PlayVideoState extends State<PlayVideo> {
   }
 
   initialProcess() {
-
     print('$uri');
 
     videoId = uri!.split("external/")[1].split(".sd.mp4")[0];
@@ -65,14 +65,17 @@ class _PlayVideoState extends State<PlayVideo> {
 
           _playerController!.addListener(() {
             if (this.mounted) {
-              if (_playerController!.value.duration.inMilliseconds == _playerController!.value.position.inMilliseconds) {
+              if (_playerController!.value.duration.inMilliseconds ==
+                  _playerController!.value.position.inMilliseconds) {
                 setState(() {
                   currentTime = 0;
-                  if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+                  if (Navigator.of(context).canPop())
+                    Navigator.of(context).pop();
                 });
               } else {
                 setState(() {
-                  currentTime = _playerController!.value.position.inMilliseconds;
+                  currentTime =
+                      _playerController!.value.position.inMilliseconds;
                 });
               }
             }
@@ -96,8 +99,10 @@ class _PlayVideoState extends State<PlayVideo> {
     double seconds = ((millis % (1000 * 60 * 60)) % (1000 * 60)) / 1000;
 
     if (hours.toInt().toString().padLeft(2, '0') == '00') {
-      timeString = '${minutes.toInt().toString().padLeft(2, '0')}:${seconds.toInt().toString().padLeft(2, '0')}';
-    } else if (hours.toInt().toString().padLeft(2, '0') == '00' && minutes.toInt().toString().padLeft(2, '0') == '00') {
+      timeString =
+          '${minutes.toInt().toString().padLeft(2, '0')}:${seconds.toInt().toString().padLeft(2, '0')}';
+    } else if (hours.toInt().toString().padLeft(2, '0') == '00' &&
+        minutes.toInt().toString().padLeft(2, '0') == '00') {
       timeString = '${seconds.toInt().toString().padLeft(2, '0')}';
     } else {
       timeString =
@@ -158,10 +163,13 @@ class _PlayVideoState extends State<PlayVideo> {
                     Container(
                       width: double.infinity,
                       height: double.infinity,
-                      child: _playerController != null && _playerController!.value != null && _playerController!.value.isInitialized
+                      child: _playerController != null &&
+                              _playerController!.value != null &&
+                              _playerController!.value.isInitialized
                           ? Center(
                               child: AspectRatio(
-                                aspectRatio: _playerController!.value.aspectRatio,
+                                aspectRatio:
+                                    _playerController!.value.aspectRatio,
                                 child: VideoPlayer(
                                   _playerController!,
                                 ),
@@ -171,9 +179,12 @@ class _PlayVideoState extends State<PlayVideo> {
                               child: CircularProgressIndicator(),
                             ),
                     ),
-                    _playerController != null && _playerController!.value != null && _playerController!.value.isInitialized
+                    _playerController != null &&
+                            _playerController!.value != null &&
+                            _playerController!.value.isInitialized
                         ? Padding(
-                            padding: const EdgeInsets.only(bottom: 16.0, left: 8.0, right: 8.0),
+                            padding: const EdgeInsets.only(
+                                bottom: 16.0, left: 8.0, right: 8.0),
                             child: Align(
                               alignment: Alignment.bottomCenter,
                               child: Visibility(
@@ -182,7 +193,8 @@ class _PlayVideoState extends State<PlayVideo> {
                                 visible: _isPanelShow,
                                 child: Container(
                                   height: 100,
-                                  decoration: BoxDecoration(color: Colors.black.withOpacity(0.7)),
+                                  decoration: BoxDecoration(
+                                      color: Colors.black.withOpacity(0.7)),
                                   child: Column(
                                     mainAxisAlignment: MainAxisAlignment.end,
                                     children: <Widget>[
@@ -197,18 +209,30 @@ class _PlayVideoState extends State<PlayVideo> {
                                           Expanded(
                                             child: Align(
                                               child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
                                                 children: [
                                                   MaterialButton(
                                                     onPressed: () {
-                                                      if (_playerController!.value.position.inSeconds > 10) {
+                                                      if (_playerController!
+                                                              .value
+                                                              .position
+                                                              .inSeconds >
+                                                          10) {
                                                         setState(() {
-                                                          _playerController!.seekTo(
-                                                              Duration(seconds: _playerController!.value.position.inSeconds - 10));
+                                                          _playerController!
+                                                              .seekTo(Duration(
+                                                                  seconds: _playerController!
+                                                                          .value
+                                                                          .position
+                                                                          .inSeconds -
+                                                                      10));
                                                         });
                                                       } else {
                                                         setState(() {
-                                                          _playerController!.seekTo(Duration(seconds: 0));
+                                                          _playerController!
+                                                              .seekTo(Duration(
+                                                                  seconds: 0));
                                                         });
                                                       }
                                                     },
@@ -219,11 +243,15 @@ class _PlayVideoState extends State<PlayVideo> {
                                                   ),
                                                   MaterialButton(
                                                     onPressed: () {
-                                                      _playerController!.value.isPlaying
-                                                          ? _playerController!.pause()
-                                                          : _playerController!.play();
+                                                      _playerController!
+                                                              .value.isPlaying
+                                                          ? _playerController!
+                                                              .pause()
+                                                          : _playerController!
+                                                              .play();
                                                     },
-                                                    child: _playerController!.value.isPlaying
+                                                    child: _playerController!
+                                                            .value.isPlaying
                                                         ? Icon(
                                                             Icons.pause,
                                                             color: Colors.white,
@@ -235,11 +263,22 @@ class _PlayVideoState extends State<PlayVideo> {
                                                   ),
                                                   MaterialButton(
                                                     onPressed: () {
-                                                      if (_playerController!.value.position.inSeconds <
-                                                          _playerController!.value.duration.inSeconds) {
+                                                      if (_playerController!
+                                                              .value
+                                                              .position
+                                                              .inSeconds <
+                                                          _playerController!
+                                                              .value
+                                                              .duration
+                                                              .inSeconds) {
                                                         setState(() {
-                                                          _playerController!.seekTo(
-                                                              Duration(seconds: _playerController!.value.position.inSeconds + 10));
+                                                          _playerController!
+                                                              .seekTo(Duration(
+                                                                  seconds: _playerController!
+                                                                          .value
+                                                                          .position
+                                                                          .inSeconds +
+                                                                      10));
                                                         });
                                                       }
                                                     },
@@ -256,49 +295,76 @@ class _PlayVideoState extends State<PlayVideo> {
                                           Expanded(
                                             flex: 0,
                                             child: Padding(
-                                              padding: const EdgeInsets.only(right: 8.0),
+                                              padding: const EdgeInsets.only(
+                                                  right: 8.0),
                                               child: IconButton(
                                                   icon: Icon(
                                                     Icons.more_vert,
                                                     color: Colors.white,
                                                   ),
                                                   onPressed: () {
-                                                    if (_playerController!.value.isInitialized) showPlayBackSpeedDialog();
+                                                    if (_playerController!
+                                                        .value.isInitialized)
+                                                      showPlayBackSpeedDialog();
                                                   }),
                                             ),
                                           )
                                         ],
                                       ),
                                       Padding(
-                                        padding: const EdgeInsets.only(left: 8.0, right: 8.0, bottom: 16.0),
+                                        padding: const EdgeInsets.only(
+                                            left: 8.0,
+                                            right: 8.0,
+                                            bottom: 16.0),
                                         child: Row(
                                           children: <Widget>[
                                             Expanded(
                                               flex: 0,
                                               child: Text(
                                                 getTimeString(currentTime),
-                                                style: TextStyle(color: Colors.grey),
+                                                style: TextStyle(
+                                                    color: Colors.grey),
                                               ),
                                             ),
                                             Expanded(
                                               child: SliderTheme(
-                                                data: SliderTheme.of(context).copyWith(
-                                                  activeTrackColor: Color(0xFF442d53),
-                                                  inactiveTrackColor: Colors.grey,
+                                                data: SliderTheme.of(context)
+                                                    .copyWith(
+                                                  activeTrackColor:
+                                                      Color(0xFF442d53),
+                                                  inactiveTrackColor:
+                                                      Colors.grey,
                                                   trackHeight: 1.0,
                                                   thumbColor: Color(0xFF442d53),
-                                                  thumbShape: RoundSliderThumbShape(enabledThumbRadius: 3.0),
-                                                  overlayColor: Colors.purple.withAlpha(32),
-                                                  overlayShape: RoundSliderOverlayShape(overlayRadius: 12.0),
+                                                  thumbShape:
+                                                      RoundSliderThumbShape(
+                                                          enabledThumbRadius:
+                                                              3.0),
+                                                  overlayColor: Colors.purple
+                                                      .withAlpha(32),
+                                                  overlayShape:
+                                                      RoundSliderOverlayShape(
+                                                          overlayRadius: 12.0),
                                                 ),
                                                 child: Slider(
-                                                    value: _playerController!.value.position.inSeconds.toDouble(),
-                                                    max: _playerController!.value.duration.inSeconds.toDouble(),
+                                                    value: _playerController!
+                                                        .value
+                                                        .position
+                                                        .inSeconds
+                                                        .toDouble(),
+                                                    max: _playerController!
+                                                        .value
+                                                        .duration
+                                                        .inSeconds
+                                                        .toDouble(),
                                                     min: 0.0,
                                                     onChanged: (value) {
                                                       print(value);
                                                       setState(() {
-                                                        _playerController!.seekTo(Duration(seconds: value.toInt()));
+                                                        _playerController!
+                                                            .seekTo(Duration(
+                                                                seconds: value
+                                                                    .toInt()));
                                                       });
                                                     }),
                                               ),
@@ -306,8 +372,12 @@ class _PlayVideoState extends State<PlayVideo> {
                                             Expanded(
                                               flex: 0,
                                               child: Text(
-                                                getTimeString(_playerController!.value.duration.inMilliseconds),
-                                                style: TextStyle(color: Colors.grey),
+                                                getTimeString(_playerController!
+                                                    .value
+                                                    .duration
+                                                    .inMilliseconds),
+                                                style: TextStyle(
+                                                    color: Colors.grey),
                                               ),
                                             ),
                                           ],
@@ -327,12 +397,14 @@ class _PlayVideoState extends State<PlayVideo> {
           : Container(
               child: Builder(
                 builder: (context) {
-                  WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+                  WidgetsBinding.instance?.addPostFrameCallback((timeStamp) {
                     Utils.showNoInternetSnackBar(_scaffoldKey);
-                    timerInternet = Timer.periodic(Duration(seconds: 2), (timer) {
+                    timerInternet =
+                        Timer.periodic(Duration(seconds: 2), (timer) {
                       if (Utils.isInternetAvailable) {
                         if (_scaffoldKey.currentContext != null)
-                          ScaffoldMessenger.of(_scaffoldKey.currentContext!).hideCurrentSnackBar();
+                          ScaffoldMessenger.of(_scaffoldKey.currentContext!)
+                              .hideCurrentSnackBar();
                         timerInternet!.cancel();
                         initialProcess();
                       }
